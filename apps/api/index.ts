@@ -1,4 +1,5 @@
 import express from 'express'
+import {prismaClient} from 'store/client'
 
 const app=express()
 
