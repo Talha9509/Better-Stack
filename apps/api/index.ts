@@ -1,27 +1,94 @@
 import express from 'express'
 import {prismaClient} from 'store/client'
+import { AuthInput } from './types'
+import jwt from 'jsonwebtoken'
+import { authMiddleware } from './middleware'
 
 const app=express()
+declare global {
+  namespace Express {
+    export interface Request {
+      userId?: string;
+    }
+  }
+}
 
 app.use(express.json())
 
-app.post("/website", async(req,res)=>{
+const secret=process.env.JWT_SECRET
+
+app.post("/website", authMiddleware, async(req,res)=>{
+    const userId=req.userId
     if(!req.body){
         return res.status(411).json({ message:"Invalid Inputs" })
     }
     const website= await prismaClient.website.create({
         data:{
             url:req.body.url,
-            timeAdded:new Date()
+            timeAdded:new Date(),
+            user_id: userId!
         }
     })
 
     res.json({id:website.id})
 })
 
-app.get("/status/:websiteId",(req,res)=>{
+app.get("/status/:websiteId", authMiddleware, async (req,res)=>{
 
 })
+
+app.post("/user/signup", async(req,res)=>{
+    const data=AuthInput.safeParse(req.body)
+    if(!data.success){
+        return res.status(403).json({message:"Invalid Inputs"})
+    }
+
+    try {
+        const user=await prismaClient.user.create({
+            data:{
+                username:data.data.username,
+                password:data.data.password
+            }
+        })
+
+        const token=jwt.sign({sub:user.id}, secret!)
+        return res.json({jwt:token, id:user.id})
+
+    } catch (error:any) {
+        if(error.code=='P2002'){
+            return res.status(403).json({message:"Username already exists"})
+        }
+        return res.status(500).json({message:"Internal Server Error"})
+    }
+})
+
+app.post("/user/signin", async(req,res)=>{
+    const data=AuthInput.safeParse(req.body)
+    if(!data.success){
+        return res.status(403).json({message:"Invalid Inputs"})
+    }
+    
+    try {
+        const user=await prismaClient.user.findFirst({
+            where:{
+                username:data.data.username,
+            }
+        })
+        if(user?.password!==data.data.password){
+            return res.status(403).json({message:"Incorrect Password"})
+        }
+
+        const token=jwt.sign({sub:user.id}, secret!)
+        return res.json({jwt:token})
+
+    } catch (error:any) {
+        if(error.code=='P2002'){
+            return res.status(403).json({message:"Username already exists"})
+        }
+        return res.status(500).json({message:"Internal Server Error"})
+    }
+})
+
 
 app.listen(process.env.PORT,()=>{
     console.log(`Running on ${process.env.PORT}`)
