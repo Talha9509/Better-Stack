@@ -8,7 +8,7 @@ describe("Website gets created", () => {
 
     })
 
-    it("Website not created if url is present", async () => {
+    it("Website created if url is present", async () => {
         const response = await fetch(`${BACKEND_URL}/website`, {
             method: 'POST',
             body: JSON.stringify({
