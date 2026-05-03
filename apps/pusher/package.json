@@ -1,0 +1,14 @@
+{
+  "name": "pusher",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "store": "workspace:*",
+    "redis-streams":"*"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "private": true,
+  "type": "module"
+}

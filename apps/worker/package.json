@@ -1,0 +1,16 @@
+{
+  "name": "worker",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "redis-streams":"*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "store": "workspace:*"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
