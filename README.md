@@ -1,159 +1,173 @@
-# Turborepo starter
+# BetterStack
 
-This Turborepo starter is maintained by the Turborepo core team.
+A full-stack website uptime monitoring platform that continuously checks website health across multiple geographic regions and provides real-time status dashboards to users.
 
-## Using this example
+## Features
 
-Run the following command:
+- **User Authentication**: Sign up and log in with JWT-based authentication.
+- **Website Monitoring**: Add websites to monitor with continuous health checks.
+- **Real-Time Dashboard**: View website status, search websites, and filter by status.
+- **Distributed Monitoring**: Multi-region architecture using Redis Streams for job distribution.
+- **Historical Data**: Track response times and monitoring history.
+- **Modern UI**: Built with Next.js, Tailwind CSS, and Radix UI components.
 
-```sh
-npx create-turbo@latest
+## Tech Stack
+
+### Frontend
+
+- Next.js 16
+- TypeScript
+- Radix UI
+- Zustand
+- Axios
+
+### Backend
+
+- Express.js
+- Node.js
+- TypeScript
+- Zod
+- JWT Authentication
+
+### Database & Infrastructure
+
+- PostgreSQL
+- Prisma ORM
+- Redis Streams
+- Turborepo
+- Bun
+
+## Project Structure
+
+```bash
+betterstack/
+├── apps/
+│   ├── web/        # Next.js frontend
+│   ├── api/        # Express backend API
+│   └── worker/     # Monitoring workers / region services
+├── packages/       # Shared packages and utilities
+├── prisma/         # Database schema and migrations
+├── turbo.json      # Turborepo configuration
+└── README.md
 ```
 
-## What's inside?
+## Prerequisites
 
-This Turborepo includes the following packages/apps:
+Before getting started, ensure the following are installed:
 
-### Apps and Packages
+- Node.js 18+ or Bun
+- PostgreSQL database (Neon recommended)
+- Redis instance
+- Git
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Installation
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### 1. Clone the repository
 
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash
+git clone https://github.com/your-username/betterstack.git
+cd betterstack
 ```
 
-Without global `turbo`, use your package manager:
+### 2. Install dependencies
 
-```sh
-cd my-turborepo
-npx turbo build
-bun dlx turbo build
-bun exec turbo build
+Using Bun:
+
+```bash
+bun install
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Or using npm:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
+```bash
+npm install
 ```
 
-Without global `turbo`:
+## Setup
 
-```sh
-npx turbo build --filter=docs
-bun exec turbo build --filter=docs
-bun exec turbo build --filter=docs
+### Database Setup
+
+1. Create a PostgreSQL database, or use a hosted provider like Neon.
+2. Update the `DATABASE_URL` in your environment configuration.
+3. Ensure your Prisma schema points to the correct database.
+
+### Redis Setup
+
+1. Start a local Redis instance or use a managed Redis service.
+2. Update the Redis connection URL in the relevant services.
+
+### Environment Variables
+
+Create `.env` files for the required apps and configure values such as:
+
+```env
+DATABASE_URL=
+JWT_SECRET=
+NEXT_PUBLIC_API_URL=
 ```
 
-### Develop
+### Database Migration
 
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
+```bash
+bunx prisma migrate dev
 ```
 
-Without global `turbo`, use your package manager:
+Or:
 
-```sh
-cd my-turborepo
-npx turbo dev
-bun exec turbo dev
-bun exec turbo dev
+```bash
+npx prisma migrate dev
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Running the Project
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Run the full monorepo with Turborepo:
 
-```sh
-turbo dev --filter=web
+```bash
+bun run dev
 ```
 
-Without global `turbo`:
+Or:
 
-```sh
-npx turbo dev --filter=web
-bun exec turbo dev --filter=web
-bun exec turbo dev --filter=web
+```bash
+npm run dev
 ```
 
-### Remote Caching
+### Run services individually
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+Examples:
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
+```bash
+cd apps/web && bun run dev
+cd apps/api && bun run dev
+cd apps/worker && bun run dev
 ```
 
-Without global `turbo`, use your package manager:
+## API Endpoints
 
-```sh
-cd my-turborepo
-npx turbo login
-bun exec turbo login
-bun exec turbo login
-```
+### Authentication
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+- `POST /user/signup` — Register a new user
+- `POST /user/signin` — Log in and receive a JWT token
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+### Websites
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+- `POST /website` — Add a new website to monitor (requires authentication)
+- `GET /websites` — List all user websites with current status (requires authentication)
+- `GET /status/:websiteId` — Get status details for a specific website (requires authentication)
 
-```sh
-turbo link
-```
+## Database Schema
 
-Without global `turbo`:
+The application uses four primary models:
 
-```sh
-npx turbo link
-bun exec turbo link
-bun exec turbo link
-```
+- **User** — Stores user account and authentication data.
+- **Website** — Stores website metadata and ownership.
+- **Region** — Represents geographic monitoring regions.
+- **WebsiteTick** — Stores individual monitoring results, including response time and status.
 
-## Useful Links
+## Contributing
 
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+1. Fork the repository.
+2. Create a new feature branch.
+3. Make your changes.
+4. Run linting and tests.
+5. Submit a pull request.
