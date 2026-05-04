@@ -3,6 +3,7 @@ import {prismaClient} from 'store/client'
 import { AuthInput } from './types'
 import jwt from 'jsonwebtoken'
 import { authMiddleware } from './middleware'
+import cors from 'cors'
 
 const app=express()
 declare global {
@@ -14,6 +15,10 @@ declare global {
 }
 
 app.use(express.json())
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}))
 
 const secret=process.env.JWT_SECRET
 
@@ -115,6 +120,21 @@ app.get("/status/:websiteId", authMiddleware, async (req,res)=>{
     return res.status(500).json({message:"Internal Server Error"})
     }
 })
+
+app.get("/websites", authMiddleware, async (req, res) => {
+    const userId=req.userId
+  const websites = await prismaClient.website.findMany({
+    where: { user_id: userId! },
+    include:{
+        ticks:{
+            select:{
+                response_time_ms:true, status:true, createdAt:true
+            }
+        }
+    }
+  });
+  res.json({ websites });
+});
 
 app.listen(process.env.PORT,()=>{
     console.log(`Running on ${process.env.PORT}`)
