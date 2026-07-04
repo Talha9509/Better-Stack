@@ -18,7 +18,6 @@ A full-stack website uptime monitoring platform that continuously checks website
 - Next.js 16
 - TypeScript
 - Radix UI
-- Zustand
 - Axios
 
 ### Backend
