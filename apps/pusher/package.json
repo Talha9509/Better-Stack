@@ -6,6 +6,10 @@
     "store": "workspace:*",
     "redis-streams":"*"
   },
+    "scripts": {
+    "dev": "bun run index.ts",
+    "start": "bun run index.ts"
+  },
   "peerDependencies": {
     "typescript": "^5"
   },

@@ -4,5 +4,3 @@ export const AuthInput= z.object({
     username:z.string(),
     password:z.string()
 })
-
-// export const 

@@ -1,4 +1,4 @@
-# BetterStack
+# Better Up Time
 
 A full-stack website uptime monitoring platform that continuously checks website health across multiple geographic regions and provides real-time status dashboards to users.
 

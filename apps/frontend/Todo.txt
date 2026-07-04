@@ -1,1 +1,0 @@
-1.bug: user can access dashboad, protect the page, restrict the user from accessing it if is not signed in

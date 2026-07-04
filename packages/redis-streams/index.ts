@@ -15,6 +15,18 @@ type MessageType = {
     }
 }
 
+export async function xGroupCreate(consumerGroup: string) {
+    try {
+        await client.xGroupCreate(STREAM_NAME, consumerGroup, '0', {
+            MKSTREAM: true
+        });
+    } catch (err: any) {
+        if (!String(err?.message).includes('BUSYGROUP')) {
+            throw err;
+        }
+    }
+}
+
 async function xAdd({id,url}:WebsiteEvent){
     const res = await client.xAdd(STREAM_NAME, '*', {
         url: url,
