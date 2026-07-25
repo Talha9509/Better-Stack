@@ -6,7 +6,7 @@ import { Plus, RefreshCw } from "lucide-react";
 import Table from "./Table";
 import Navbar from "./Navbar";
 import SearchBar from "./SearchBar";
-import StatusFilter from "./StatusFilter";
+// import StatusFilter from "./StatusFilter";
 import AddWebsiteModal from "./AddWebsiteModal";
 import { useWebsiteStore } from "@/stores/websiteStore";
 import { useUIStore } from "@/stores/uiStore";
@@ -23,27 +23,28 @@ export default function Dashboard() {
 
   const filteredWebsites = websites.filter((site) => {
     const matchesSearch = site.url.toLowerCase().includes(searchQuery.toLowerCase());
+    // @ts-ignore
     const matchesStatus = statusFilter === 'all' || site.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   if (loading && websites.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-green-50 to-emerald-100 flex items-center justify-center">
         <div className="text-xl text-gray-700">Loading websites...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
+    <div className="min-h-screen bg-linear-to-br from-green-50 to-emerald-100">
       <Navbar />
       
       <main className="container mx-auto px-4 py-8">
         {/* Controls Bar */}
         <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
           <SearchBar />
-          <StatusFilter />
+          {/* <StatusFilter /> */}
           
           <div className="flex gap-3">
             <button

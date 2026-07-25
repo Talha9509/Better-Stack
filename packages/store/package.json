@@ -6,6 +6,9 @@
   "exports":{
     "./client":"./index.ts"
   },
+  "scripts": {
+    "postinstall": "prisma generate --schema prisma/schema.prisma"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },

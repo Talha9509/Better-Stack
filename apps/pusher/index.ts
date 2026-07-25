@@ -10,13 +10,13 @@ async function main() {
     })
 
     console.log(websites)
-    await xAddBulk(websites.map(w=>({
-        url:w.url,
-        id:w.id
+    await xAddBulk(websites.map(website=>({
+        url:website.url,
+        id:website.id
     })))
 
 }
 
 setInterval(() => {
     main()
-}, 30 * 60 * 1000);
+}, 100 * 1000);

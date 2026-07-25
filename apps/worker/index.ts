@@ -1,15 +1,15 @@
 import { prismaClient } from 'store/client'
 import { xAckBulk, xReadGroup, xGroupCreate } from 'redis-streams/client'
 
-const REGION_ID = process.env.a!
-const WORKER_ID = process.env.b!
-const region = 'e4a4fb9d-291b-45f6-8bdd-597d90a9301a'
+const CONSUMERGROUPREGION = "india-1"
+const REGION_ID = "e4a4fb9d-291b-45f6-8bdd-597d90a9301a"
 
 async function main() {
-    await xGroupCreate(REGION_ID);
+    const createGroup = await xGroupCreate(CONSUMERGROUPREGION);
+    console.log("group "+createGroup)
 
     while (1) {
-        const response = await xReadGroup(REGION_ID, WORKER_ID);
+        const response = await xReadGroup(CONSUMERGROUPREGION, REGION_ID);
 
         if (!response) {
             continue;
@@ -19,7 +19,7 @@ async function main() {
         await Promise.all(promises);
         console.log(promises.length);
 
-        xAckBulk(REGION_ID, response.map(({ id }) => id));
+        xAckBulk(CONSUMERGROUPREGION, response.map(({ id }) => id));
     }
 }
 
@@ -27,8 +27,8 @@ async function fetchWebsite(websiteId: string, url: string) {
     return new Promise<void>(async (resolve, reject) => {
         const startTime = Date.now()
         try {
-            const a: any = await fetch(url, { method: 'GET' })
-            if (a.ok) {
+            const res: any = await fetch(url, { method: 'GET' })
+            if (res.ok) {
                 const endTime = Date.now()
                 await prismaClient.websiteTick.create({
                     data: {

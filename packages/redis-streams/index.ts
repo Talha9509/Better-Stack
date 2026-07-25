@@ -17,15 +17,36 @@ type MessageType = {
 
 export async function xGroupCreate(consumerGroup: string) {
     try {
-        await client.xGroupCreate(STREAM_NAME, consumerGroup, '0', {
+        const createGroup = await client.xGroupCreate(STREAM_NAME, consumerGroup, '0', {
             MKSTREAM: true
         });
+        console.log(createGroup)
     } catch (err: any) {
         if (!String(err?.message).includes('BUSYGROUP')) {
             throw err;
         }
     }
 }
+
+async function xAck(consumerGroup:string, eventId:string) {
+    await client.xAck(STREAM_NAME,consumerGroup,eventId)
+}
+
+export async function xAckBulk(consumerGroup:string, eventIds:string[]) {
+    eventIds.map(eventId => xAck(consumerGroup, eventId))
+}
+
+export async function xReadGroup(consumerGroup: string, workerId: string): Promise<MessageType[] | undefined> {
+    const res = await client.xReadGroup(consumerGroup, workerId, { key: STREAM_NAME, id: '>' },
+         { 'COUNT': 5 }
+    );
+
+    // @ts-ignore
+    let messages: MessageType[] | undefined = res?.[0]?.messages;
+
+    return messages;
+}
+
 
 async function xAdd({id,url}:WebsiteEvent){
     const res = await client.xAdd(STREAM_NAME, '*', {
@@ -41,28 +62,4 @@ export async function xAddBulk(websites: WebsiteEvent[]) {
             url:(websites[i]?.url as string)
         })
     }
-}
-
-async function xAck(consumerGroup:string, eventId:string) {
-    await client.xAck(STREAM_NAME,consumerGroup,eventId)
-}
-
-export async function xAckBulk(consumerGroup:string, eventIds:string[]) {
-    eventIds.map(eventId => xAck(consumerGroup, eventId))
-}
-
-export async function xReadGroup(consumerGroup: string, workerId: string): Promise<MessageType[] | undefined> {
-    const res = await client.xReadGroup(
-        consumerGroup, workerId, {
-            key: STREAM_NAME,
-            id: '>'
-        }, {
-        'COUNT': 5
-        }
-    );
-
-    //@ts-ignore
-    let messages: MessageType[] | undefined = res?.[0]?.messages;
-
-    return messages;
 }
