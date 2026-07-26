@@ -6,10 +6,11 @@ import { Plus, RefreshCw } from "lucide-react";
 import Table from "./Table";
 import Navbar from "./Navbar";
 import SearchBar from "./SearchBar";
-// import StatusFilter from "./StatusFilter";
+import StatusFilter from "./StatusFilter";
 import AddWebsiteModal from "./AddWebsiteModal";
 import { useWebsiteStore } from "@/stores/websiteStore";
 import { useUIStore } from "@/stores/uiStore";
+import type { Website } from "@/types";
 
 export default function Dashboard() {
 
@@ -20,11 +21,17 @@ export default function Dashboard() {
     fetchWebsites();
   }, [fetchWebsites]);
 
+  const getWebsiteStatus = (site: Website) => {
+    const latestTick = [...(site.ticks ?? [])].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )[0];
+
+    return latestTick?.status?.toLowerCase() ?? "unknown";
+  };
 
   const filteredWebsites = websites.filter((site) => {
     const matchesSearch = site.url.toLowerCase().includes(searchQuery.toLowerCase());
-    // @ts-ignore
-    const matchesStatus = statusFilter === 'all' || site.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || getWebsiteStatus(site) === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -44,7 +51,7 @@ export default function Dashboard() {
         {/* Controls Bar */}
         <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
           <SearchBar />
-          {/* <StatusFilter /> */}
+          <StatusFilter />
           
           <div className="flex gap-3">
             <button

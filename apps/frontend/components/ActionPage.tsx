@@ -27,6 +27,8 @@ export default function WebsiteDetailPage({ websiteId }: WebsiteDetailPageProps)
 
   const stats = useMemo(() => {
     if (!website || !website.ticks || website.ticks.length === 0) return null;
+    console.log(website)
+    console.log(website.ticks)
 
     const ticks = [...website.ticks].sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
