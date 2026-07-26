@@ -16,7 +16,7 @@ declare global {
 
 app.use(express.json())
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.FRONTEND,
   credentials: true
 }))
 
@@ -136,6 +136,8 @@ app.get("/websites", authMiddleware, async (req, res) => {
   res.json({ websites });
 });
 
-app.listen(process.env.PORT,()=>{
-    console.log(`Running on ${process.env.PORT}`)
-})
+// app.listen(process.env.PORT,()=>{
+//     console.log(`Running on ${process.env.PORT}`)
+// })
+
+module.exports = app;

@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 // import { API_URL } from "./config";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 10000,
