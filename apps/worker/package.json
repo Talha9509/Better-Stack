@@ -4,8 +4,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@upstash/qstash": "^2.11.3",
-    "redis-streams": "*"
+    "@upstash/qstash": "^2.11.3"
   },
   "scripts": {
     "dev": "bun run index.ts",
