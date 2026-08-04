@@ -1,0 +1,20 @@
+FROM oven/bun
+
+WORKDIR /app
+
+RUN apt-get update -y && apt-get install -y openssl
+
+
+COPY ./package.json ./package.json
+COPY ./bun.lock ./bun.lock
+COPY ./turbo.json ./turbo.json
+
+COPY ./packages ./packages
+COPY ./apps/api ./apps/api
+
+RUN bun install --filter api
+RUN bun run db:generate
+
+EXPOSE 3001
+
+CMD ["bun", "run", "start:backend"]
