@@ -4,9 +4,9 @@
   "devDependencies": {
     "@types/bun": "latest",
     "store": "workspace:*",
-    "redis-streams":"*"
+    "redis-streams": "*"
   },
-    "scripts": {
+  "scripts": {
     "dev": "bun run index.ts",
     "start": "bun run index.ts"
   },
@@ -14,5 +14,8 @@
     "typescript": "^5"
   },
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@upstash/qstash": "^2.11.3"
+  }
 }

@@ -1,63 +1,50 @@
 import { prismaClient } from 'store/client'
-import { xAckBulk, xReadGroup, xGroupCreate } from 'redis-streams/client'
+import { Receiver } from '@upstash/qstash'
 
-const CONSUMERGROUPREGION = "india-1"
-const REGION_ID = "e4a4fb9d-291b-45f6-8bdd-597d90a9301a"
+const receiver = new Receiver({
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY!
+})
 
-async function main() {
-    const createGroup = await xGroupCreate(CONSUMERGROUPREGION);
-    console.log("group "+createGroup)
+export const handler = async (event: any) => {
+  const signature = event.headers['upstash-signature'] || event.headers['Upstash-Signature']
+  const isValid = await receiver.verify({ signature, body: event.body }).catch(() => false)
 
-    while (1) {
-        const response = await xReadGroup(CONSUMERGROUPREGION, REGION_ID);
+  if (!isValid) {
+    console.log("Invalid")
+    return { statusCode: 401, body: 'Unauthorized' }
+  }
 
-        if (!response) {
-            continue;
-        }
+  const { websiteId, url, regionId } = JSON.parse(event.body)
 
-        let promises = response.map(({ message }) => fetchWebsite(message.id, message.url))
-        await Promise.all(promises);
-        console.log(promises.length);
-
-        xAckBulk(CONSUMERGROUPREGION, response.map(({ id }) => id));
-    }
-}
-
-async function fetchWebsite(websiteId: string, url: string) {
-    return new Promise<void>(async (resolve, reject) => {
-        const startTime = Date.now()
-        try {
-            const res: any = await fetch(url, { method: 'GET' })
-            if (res.ok) {
-                const endTime = Date.now()
-                await prismaClient.websiteTick.create({
-                    data: {
-                        response_time_ms: endTime - startTime,
-                        status: 'Up',
-                        region_id: REGION_ID,
-                        website_id: websiteId
-                    }
-                })
-                resolve()
-            }
-        } catch (error) {
-            const endTime = Date.now()
-            await prismaClient.websiteTick.create({
-                data: {
-                    response_time_ms: endTime - startTime,
-                    status: 'Down',
-                    region_id: REGION_ID,
-                    website_id: websiteId
-                }
-            })
-            resolve()
-        }
-
+  const startTime = Date.now()
+  try {
+    const res = await fetch(url, { method: 'GET' })
+    console.log(res)
+    const endTime = Date.now()
+    
+    await prismaClient.websiteTick.create({
+      data: {
+        response_time_ms: endTime - startTime,
+        status: res.ok ? 'Up' : 'Down',
+        region_id: regionId,
+        website_id: websiteId
+      }
     })
+  } catch (error) {
+    const endTime = Date.now()
+    await prismaClient.websiteTick.create({
+      data: {
+        response_time_ms: endTime - startTime,
+        status: 'Down',
+        region_id: regionId,
+        website_id: websiteId
+      }
+    })
+  }
+
+  return { statusCode: 200, body: JSON.stringify({ success: true }) }
 }
-
-main()
-
 
 
 
