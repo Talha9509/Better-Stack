@@ -136,8 +136,6 @@ app.get("/websites", authMiddleware, async (req, res) => {
   res.json({ websites });
 });
 
-// app.listen(process.env.PORT,()=>{
-//     console.log(`Running on ${process.env.PORT}`)
-// })
-
-module.exports = app;
+app.listen(process.env.PORT,()=>{
+    console.log(`Running on ${process.env.PORT}`)
+})
