@@ -13,6 +13,7 @@ declare global {
     }
   }
 }
+const PORT = 3001
 
 app.use(express.json())
 app.use(cors({
@@ -22,7 +23,7 @@ app.use(cors({
 
 const secret=process.env.JWT_SECRET
 
-app.post("/user/signup", async(req,res)=>{
+app.post("/api/v1/user/signup", async(req,res)=>{
     const data=AuthInput.safeParse(req.body)
     if(!data.success){
         return res.status(403).json({message:"Invalid Inputs"})
@@ -47,7 +48,7 @@ app.post("/user/signup", async(req,res)=>{
     }
 })
 
-app.post("/user/signin", async(req,res)=>{
+app.post("/api/v1/user/signin", async(req,res)=>{
     const data=AuthInput.safeParse(req.body)
     if(!data.success){
         return res.status(403).json({message:"Invalid Inputs"})
@@ -78,7 +79,7 @@ app.post("/user/signin", async(req,res)=>{
     }
 })
 
-app.post("/website", authMiddleware, async(req,res)=>{
+app.post("/api/v1/website", authMiddleware, async(req,res)=>{
     const userId=req.userId
     if(!req.body){
         return res.status(411).json({ message:"Invalid Inputs" })
@@ -94,7 +95,7 @@ app.post("/website", authMiddleware, async(req,res)=>{
     res.json({id:website.id})
 })
 
-app.get("/status/:websiteId", authMiddleware, async (req,res)=>{
+app.get("/api/v1/status/:websiteId", authMiddleware, async (req,res)=>{
     const id=req.params.websiteId as string
 
     try {
@@ -121,7 +122,7 @@ app.get("/status/:websiteId", authMiddleware, async (req,res)=>{
     }
 })
 
-app.get("/websites", authMiddleware, async (req, res) => {
+app.get("/api/v1/websites", authMiddleware, async (req, res) => {
     const userId=req.userId
   const websites = await prismaClient.website.findMany({
     where: { user_id: userId! },
@@ -136,6 +137,6 @@ app.get("/websites", authMiddleware, async (req, res) => {
   res.json({ websites });
 });
 
-app.listen(process.env.PORT,()=>{
-    console.log(`Running on ${process.env.PORT}`)
+app.listen(PORT,()=>{
+    console.log(`Running on ${PORT}`)
 })

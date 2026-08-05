@@ -22,7 +22,7 @@ export const useWebsiteStore = create<WebsiteState>((set, get) => ({
   fetchWebsites: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await apiClient.get<WebsitesResponse>('/websites');
+      const response = await apiClient.get<WebsitesResponse>('websites');
       console.log(response)
       set({ websites: response.data.websites, loading: false });
     } catch (error: any) {
@@ -35,7 +35,7 @@ export const useWebsiteStore = create<WebsiteState>((set, get) => ({
 
   addWebsite: async (url: string) => {
     try {
-      const response = await apiClient.post<AddWebsiteResponse>('/website', { url });
+      const response = await apiClient.post<AddWebsiteResponse>('website', { url });
       // Refresh the list after adding
       await get().fetchWebsites();
     } catch (error: any) {

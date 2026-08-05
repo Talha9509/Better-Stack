@@ -1,9 +1,11 @@
 import axios, { AxiosInstance } from "axios";
 // import { API_URL } from "./config";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const url = `${API_URL}/api/v1/`
+console.log("url: "+url)
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: url,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

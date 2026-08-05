@@ -32,7 +32,7 @@ function SigninComponent() {
 
   async function onSubmit(data: AuthForm) {
     try {
-      const res = await apiClient.post<SigninResponse>("/user/signin", data);
+      const res = await apiClient.post<SigninResponse>("user/signin", data);
       
       // Save token to localStorage and auth store
       localStorage.setItem("authorization", res.data.jwt);

@@ -30,7 +30,7 @@ function SignupComponent() {
 
   async function onSubmit(data: AuthForm) {
     try {
-      const res = await apiClient.post<SignupResponse>("/user/signup", data);
+      const res = await apiClient.post<SignupResponse>("user/signup", data);
       
       
       toast.success("Signup successful! Please login.");

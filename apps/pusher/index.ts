@@ -30,4 +30,4 @@ async function main() {
 
 setInterval(() => {
   main()
-}, 8* 1000);
+}, 3 * 60 * 60 * 1000);
