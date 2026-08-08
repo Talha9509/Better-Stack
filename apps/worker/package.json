@@ -8,10 +8,12 @@
   },
   "scripts": {
     "dev": "bun run index.ts",
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --outfile=dist/index.js",
     "start": "bun run index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "esbuild": "^0.28.1",
     "store": "workspace:*"
   },
   "peerDependencies": {

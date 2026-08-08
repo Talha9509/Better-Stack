@@ -9,25 +9,31 @@ const WORKER_ENDPOINTS = [
 ]
 
 async function main() {
-  const websites = await prismaClient.website.findMany({
-    select: { url: true, id: true }
-  })
-  console.log(JSON.stringify(websites))
-
-  for (const website of websites) {
-    for (const endpoint of WORKER_ENDPOINTS) {
-      await qstash.publishJSON({
-        url: endpoint.url,
-        body: {
-          websiteId: website.id,
-          url: website.url,
-          regionId: endpoint.regionId
-        }
-      })
+  try {
+    const websites = await prismaClient.website.findMany({
+      select: { url: true, id: true }
+    })
+    console.log(JSON.stringify(websites))
+  
+    for (const website of websites) {
+      for (const endpoint of WORKER_ENDPOINTS) {
+        const queue = await qstash.publishJSON({
+          url: endpoint.url,
+          body: {
+            websiteId: website.id,
+            url: website.url,
+            regionId: endpoint.regionId
+          }
+        })
+        console.log(queue)
+        console.log(JSON.stringify(queue))
+      }
     }
+  } catch (error) {
+    console.error("Error in pusher cycle, process will NOT exit:", error);
   }
 }
 
 setInterval(() => {
   main()
-}, 3 * 60 * 60 * 1000);
+}, 6 * 60 * 60 * 1000);
