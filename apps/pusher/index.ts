@@ -17,8 +17,11 @@ async function main() {
   
     for (const website of websites) {
       for (const endpoint of WORKER_ENDPOINTS) {
+        const currentHour = new Date().toISOString().slice(0, 13);
         const queue = await qstash.publishJSON({
           url: endpoint.url,
+          deduplicationId: `${website.id}-${endpoint.regionId}-${currentHour}`,
+          retries: 1,
           body: {
             websiteId: website.id,
             url: website.url,
