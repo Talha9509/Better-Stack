@@ -4,7 +4,7 @@ import { Client } from '@upstash/qstash'
 const qstash = new Client({ token: process.env.QSTASH_TOKEN! })
 
 const WORKER_ENDPOINTS = [
-  { regionId: "e4a4fb9d-291b-45f6-8bdd-597d90a9301a", url: process.env.INDIA_WORKER_LAMBDA_URL! },
+  { regionId: "c68fc461-9645-472f-b1b2-6818bac36de9", url: process.env.INDIA_WORKER_LAMBDA_URL! },
   { regionId: "822c3c19-6ea2-4e35-9261-64ffe24bf93a", url: process.env.USA_WORKER_LAMBDA_URL! }
 ]
 
@@ -39,4 +39,4 @@ async function main() {
 
 setInterval(() => {
   main()
-}, 6 * 60 * 60 * 1000);
+}, 20 * 1000);
