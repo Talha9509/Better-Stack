@@ -201,18 +201,12 @@ export default function WebsiteDetailPage({ websiteId }: WebsiteDetailPageProps)
 
           {/* Timeline Bar */}
           <div className="mb-8">
-            <div className="flex items-center gap-1 h-16 w-full overflow-hidden bg-white/40 p-1 rounded-lg border border-green-50">
+            <div className="flex items-center gap-1 h-16 w-full overflow-visible bg-white/40 p-1 rounded-lg border border-green-50">
               {stats.timeline.map((tick, index) => (
-                <div
-                  key={tick.id || index}
-                  className={`flex-1 h-full min-w-[10px] rounded-md transition-all duration-200 hover:scale-105 hover:shadow-md cursor-pointer flex items-center justify-center group relative ${
-                    tick.status === 'Up' 
-                      ? 'bg-green-400 hover:bg-green-500' 
-                      : 'bg-red-400 hover:bg-red-500'
-                  }`}
-                >
+                <div key={tick.id || index} className={`flex-1 h-full min-w-[10px] rounded-md transition-all duration-200 hover:scale-105 hover:shadow-md cursor-pointer flex items-center justify-center group relative ${tick.status === 'Up' ? 'bg-green-400 hover:bg-green-500' : 'bg-red-400 hover:bg-red-500'
+                  }`}>
                    {/* Tooltip */}
-                   <div className="absolute bottom-full mb-3 hidden group-hover:block z-20 w-48 bg-white text-gray-800 text-xs p-3 rounded-lg border border-green-100 shadow-xl pointer-events-none animate-in fade-in slide-in-from-bottom-2">
+                   <div className="absolute bottom-full mb-3 hidden group-hover:block z-20 min-w-36 bg-white text-gray-800 text-xs p-3 rounded-lg border border-green-100 shadow-xl pointer-events-auto animate-in fade-in slide-in-from-bottom-2">
                     <p className="font-bold mb-1 text-gray-900">{formatDate(tick.createdAt)}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-500">Status:</span>
@@ -220,7 +214,11 @@ export default function WebsiteDetailPage({ websiteId }: WebsiteDetailPageProps)
                     </div>
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-gray-500">Response:</span>
-                      <span className="font-medium text-gray-900">{tick.response_time_ms}ms</span>
+                      <span className="font-medium text-gray-900">{tick.response_time_ms} ms</span>
+                    </div>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-gray-500">Region:</span>
+                      <span className="font-medium text-gray-900">{tick.region_id == '822c3c19-6ea2-4e35-9261-64ffe24bf93a' ? 'USA' : 'India'}</span>
                     </div>
                     {/* Tiny Arrow */}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-8 border-transparent border-t-white"></div>
@@ -254,9 +252,6 @@ export default function WebsiteDetailPage({ websiteId }: WebsiteDetailPageProps)
           </div>
         </div>
 
-        <div className="text-center text-green-700/50 text-xs py-4 font-mono">
-          ID: {websiteId}
-        </div>
       </div>
     </div>
   );

@@ -128,9 +128,9 @@ app.get("/api/v1/websites", authMiddleware, async (req, res) => {
     where: { user_id: userId! },
     include:{
         ticks:{
-            select:{
-                response_time_ms:true, status:true, createdAt:true
-            }
+            orderBy: [{ createdAt: 'desc' }],
+            select:{ response_time_ms: true, status: true, createdAt: true, id: true, region_id: true },
+            take: 20
         }
     }
   });

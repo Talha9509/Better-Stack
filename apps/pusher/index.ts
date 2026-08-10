@@ -39,4 +39,4 @@ async function main() {
 
 setInterval(() => {
   main()
-}, 20 * 1000);
+}, 6 * 60 * 60 * 1000);
