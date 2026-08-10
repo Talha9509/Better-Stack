@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@upstash/qstash": "^2.11.3"
+    "@upstash/qstash": "^2.11.3",
+    "axios": "1.14.0"
   },
   "scripts": {
     "dev": "bun run index.ts",
