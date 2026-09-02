@@ -18,6 +18,11 @@ export default function Dashboard() {
   const { searchQuery, statusFilter, openModal } = useUIStore();
 
   useEffect(() => {
+    if (!localStorage.getItem("authorization")) {
+      window.location.replace("/signin");
+      return;
+    }
+
     fetchWebsites();
   }, [fetchWebsites]);
 

@@ -14,6 +14,7 @@ export type WebsiteForm = z.infer<typeof WebsiteFormSchema>;
 
 export interface SignupResponse {
   id: string;
+  jwt: string
 }
 
 export interface SigninResponse {

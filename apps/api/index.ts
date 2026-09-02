@@ -89,6 +89,7 @@ app.post("/api/v1/user/signin", authLimiter, async(req,res)=>{
         return res.json({jwt:token})
 
     } catch (error:any) {
+        console.log(error)
         if(error.code=='P2002'){
             return res.status(403).json({message:"Username already exists"})
         }

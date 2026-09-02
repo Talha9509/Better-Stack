@@ -16,6 +16,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AuthFormSchema, AuthForm, SignupResponse } from "@/types";
 import { apiClient } from "@/lib/AxiosHandling";
+import { useAuthStore } from "@/stores/authStore";
 
 function SignupComponent() {
   const form = useForm<AuthForm>({
@@ -27,14 +28,19 @@ function SignupComponent() {
   });
 
   const router = useRouter();
+  const { setAuth } = useAuthStore();
 
   async function onSubmit(data: AuthForm) {
     try {
       const res = await apiClient.post<SignupResponse>("user/signup", data);
-      
-      
-      toast.success("Signup successful! Please login.");
-      router.push("/signin");
+
+      localStorage.setItem("authorization", res.data.jwt);
+      localStorage.setItem("user", JSON.stringify({ name: data.username }));
+
+      setAuth(res.data.jwt, { name: data.username });
+
+      toast.success("Signup successful!");
+      router.push("/dashboard");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Signup failed");
     }
@@ -73,8 +79,8 @@ function SignupComponent() {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-2">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full mt-8"
               disabled={form.formState.isSubmitting}
             >
