@@ -80,7 +80,8 @@ app.post("/api/v1/user/signin", authLimiter, async(req,res)=>{
             return res.status(403).json({message:"Signup first"})
 
         }
-        if(user?.password!==data.data.password){
+        const valid = await bcrypt.compare(data.data.password, user.password)
+        if(!valid){
             return res.status(403).json({message:"Incorrect Password"})
         }
 
