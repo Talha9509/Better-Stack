@@ -4,6 +4,8 @@ import { AuthInput } from './types'
 import jwt from 'jsonwebtoken'
 import { authMiddleware } from './middleware'
 import cors from 'cors'
+import bcrypt from 'bcrypt'
+import rateLimit from 'express-rate-limit'
 
 const app=express()
 declare global {
@@ -23,17 +25,30 @@ app.use(cors({
 
 const secret=process.env.JWT_SECRET
 
-app.post("/api/v1/user/signup", async(req,res)=>{
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 5,
+  message: { message: 'Too many attempts, try again later' }
+})
+
+const rateLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, 
+  max: 100,
+  message: { message: 'Too many attempts, try again later' }
+})
+
+app.post("/api/v1/user/signup", authLimiter, async(req,res)=>{
     const data=AuthInput.safeParse(req.body)
     if(!data.success){
         return res.status(403).json({message:"Invalid Inputs"})
     }
 
     try {
+        const hashed = await bcrypt.hash(data.data.password, 8)
         const user=await prismaClient.user.create({
             data:{
                 username:data.data.username,
-                password:data.data.password
+                password: hashed
             }
         })
 
@@ -41,6 +56,7 @@ app.post("/api/v1/user/signup", async(req,res)=>{
         return res.json({jwt:token, id:user.id})
 
     } catch (error:any) {
+        console.log(error)
         if(error.code=='P2002'){
             return res.status(403).json({message:"Username already exists"})
         }
@@ -48,7 +64,7 @@ app.post("/api/v1/user/signup", async(req,res)=>{
     }
 })
 
-app.post("/api/v1/user/signin", async(req,res)=>{
+app.post("/api/v1/user/signin", authLimiter, async(req,res)=>{
     const data=AuthInput.safeParse(req.body)
     if(!data.success){
         return res.status(403).json({message:"Invalid Inputs"})
@@ -79,7 +95,7 @@ app.post("/api/v1/user/signin", async(req,res)=>{
     }
 })
 
-app.post("/api/v1/website", authMiddleware, async(req,res)=>{
+app.post("/api/v1/website", rateLimiter, authMiddleware, async(req,res)=>{
     const userId=req.userId
     if(!req.body){
         return res.status(411).json({ message:"Invalid Inputs" })
@@ -95,7 +111,7 @@ app.post("/api/v1/website", authMiddleware, async(req,res)=>{
     res.json({id:website.id})
 })
 
-app.get("/api/v1/status/:websiteId", authMiddleware, async (req,res)=>{
+app.get("/api/v1/status/:websiteId", rateLimiter, authMiddleware, async (req,res)=>{
     const id=req.params.websiteId as string
 
     try {
@@ -122,7 +138,7 @@ app.get("/api/v1/status/:websiteId", authMiddleware, async (req,res)=>{
     }
 })
 
-app.get("/api/v1/websites", authMiddleware, async (req, res) => {
+app.get("/api/v1/websites", rateLimiter, authMiddleware, async (req, res) => {
     const userId=req.userId
   const websites = await prismaClient.website.findMany({
     where: { user_id: userId! },
